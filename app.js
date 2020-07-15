@@ -1,8 +1,12 @@
 //jshint esversion:6
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = express();
 //looks for the files in the public folder
@@ -53,7 +57,22 @@ app.post("/register", function (req, res) {
   });
 });
 
-app.post("/login", function (req, res) {});
+app.post("/login", function (req, res) {
+  username: req.body.username;
+  password: req.body.password;
+
+  User.findOne({ email: username }, function (err, foundUser) {
+    if (err) {
+      console.log(err);
+    } else {
+      if (foundUser) {
+        if (foundUser.password === password) {
+          res.render("secrets");
+        }
+      }
+    }
+  });
+});
 
 app.listen(3000, function () {
   console.log("server started at port");
